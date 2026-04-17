@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ALL_ISSUES } from "../page";
+import { AgentChat } from "@/components/platform/AgentChat";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -490,6 +491,23 @@ export default function IssueDetailPage({ params }: { params: { id: string } }) 
 
           {/* Comments */}
           <CommentsSection issue={issue} />
+
+          {/* Chat with Agent */}
+          <div className="rounded-2xl border border-border bg-card overflow-hidden mt-4" style={{ height: '320px' }}>
+            <div className="px-5 py-3 border-b border-border flex items-center gap-2">
+              <Bot className="w-4 h-4 text-muted-foreground" />
+              <span className="text-sm font-semibold">Chat with {issue.agent}</span>
+              <span className="text-xs text-muted-foreground/60 ml-auto">Powered by {('model' in issue ? String((issue as { model?: string }).model) : 'Gemma 4')}</span>
+            </div>
+            <AgentChat
+              agentName={issue.agent}
+              agentRole="AI Agent"
+              model="google/gemma-4-26b-a4b-it:free"
+              systemPrompt={`You are ${issue.agent} working on issue ${issue.id}: "${issue.title}". Answer questions about this task.`}
+              initialMessage={`I'm working on "${issue.title}". Ask me anything about this task or give me instructions.`}
+              className="h-[270px]"
+            />
+          </div>
         </div>
 
         {/* Right panel — 320px fixed */}

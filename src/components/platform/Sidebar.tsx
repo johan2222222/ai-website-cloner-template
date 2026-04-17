@@ -6,13 +6,15 @@ import {
   LayoutDashboard, Inbox, CircleDot, Repeat2, Target, Network,
   Boxes, DollarSign, History, Settings, SquarePen, Search,
   Bot, CheckSquare, ChevronDown, Plus,
-  Check,
+  Check, LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useShell } from "./PlatformShell";
 import { MyaiCompanyLogo } from "./Logo";
 import { useI18n } from "@/context/i18n";
 import { useState } from "react";
+import { useAuth } from "@/context/auth";
+import { logout } from "@/lib/auth-actions";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -93,6 +95,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 export function Sidebar() {
   const { openCommandPalette, openNewProject, openNewAgent, projects, activeProject, setActiveProject } = useShell();
   const { t } = useI18n();
+  const { user } = useAuth();
 
   const navItems: NavItemDef[] = [
     { labelKey: "dashboard" as const, href: "/", icon: LayoutDashboard },
@@ -261,6 +264,28 @@ export function Sidebar() {
           </Link>
         ))}
       </nav>
+
+      {/* User footer */}
+      <div className="border-t border-sidebar-border p-3 flex items-center gap-2.5 mt-auto">
+        <div className="w-7 h-7 rounded-full bg-sidebar-primary/20 flex items-center justify-center text-xs font-semibold text-sidebar-primary shrink-0">
+          {user?.displayName?.[0]?.toUpperCase() ?? user?.email?.[0]?.toUpperCase() ?? "?"}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="text-xs font-medium text-sidebar-foreground truncate">
+            {user?.displayName ?? user?.email ?? "User"}
+          </div>
+          <div className="text-[10px] text-sidebar-foreground/40 truncate">
+            {user?.email ?? ""}
+          </div>
+        </div>
+        <button
+          onClick={logout}
+          className="p-1 text-sidebar-foreground/30 hover:text-sidebar-foreground transition-colors"
+          title="Sign out"
+        >
+          <LogOut className="w-3.5 h-3.5" />
+        </button>
+      </div>
     </aside>
   );
 }
